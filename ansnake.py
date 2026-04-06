@@ -64,37 +64,38 @@ snake_body.append(head)
 snack = Snack(300,400)
 
 
+
 while True:
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       print(f"score is {score}")
       print(len(snake_body))
-      for i in range(len(snake_body)):
-        print(f"snake_body{i}--->({snake_body[i].x,snake_body[i].y})")
+      print(body_rects)
       pygame.quit()
       sys.exit()
 
     keys = pygame.key.get_pressed()
+  body_rects = [None]*len(snake_body)
   for snake in snake_body:
     if keys[pygame.K_RIGHT]:
       if head.speed_x == 0:
-        snake.speed_x = 10
+        snake.speed_x = 16
         snake.speed_y = 0
 
     if keys[pygame.K_LEFT]:
       if head.speed_x == 0:
-        snake.speed_x = -10
+        snake.speed_x = -16
         snake.speed_y = 0
 
     if keys[pygame.K_DOWN]:
       if head.speed_y == 0:
         snake.speed_x = 0
-        snake.speed_y = 10
+        snake.speed_y = 16
 
     if keys[pygame.K_UP]:
       if head.speed_y == 0:
         snake.speed_x = 0
-        snake.speed_y = -10
+        snake.speed_y = -16
 
 
   screen.fill("black")
@@ -109,33 +110,42 @@ while True:
   head_rect = pygame.Rect(head.x,head.y,16,16)
 
 
-  #if head.speed_x != 0 or head.speed_y != 0:
   for j in range(len(snake_body)-1,0,-1):
-      #file.write(f"snake_body{j}--->{(snake_body[j].x,snake_body[j].y)}")
     snake_body[j].follow(snake_body[j-1],head)
-      #print(f"snake_body{j}--->{(snake_body[j].x,snake_body[j].y)}")
+  
+  for i in range(len(snake_body)):
+    body_rects[i] = pygame.Rect(snake_body[i].x,snake_body[i].y,16,16)
+      
   
       
 
   if head_rect.colliderect(snack_rect):
     eat_sound.play(maxtime=700)
     last_rect = snake_body[len(snake_body)-1]
-    if head.speed_x > 0:
-      newx = last_rect.x - 16
-      newy = last_rect.y
-    if head.speed_x < 0:
-      newx = last_rect.x + 16
-      newy = last_rect.y
-    if head.speed_y > 0:
-      newy = last_rect.y - 16
+    if last_rect.speed_y>0:
       newx = last_rect.x
-    if head.speed_y < 0:
-      newy = last_rect.y + 16
+      newy = last_rect.y-16
+    if last_rect.speed_y<0:
       newx = last_rect.x
+      newy = last_rect.y+16
+    if last_rect.speed_x>0:
+      newx = last_rect.x-16
+      newy = last_rect.y
+    if last_rect.speed_x<0:
+      newx = last_rect.x+16
+      newy = last_rect.y
+    #body_rects.append([newx,newy,16,16])
     snake_body.append(SnakeBody(newx,newy))
     snack.x = random.randint(10,488)
     snack.y = random.randint(10,488)
     score+=1
+
+  if len(body_rects)>3:
+    for i in range(2,len(body_rects)):
+      if head_rect.colliderect(body_rects[i]):
+        print(f"your score is {score}")
+        pygame.quit()
+        sys.exit()
     
 
 
