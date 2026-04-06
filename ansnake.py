@@ -152,5 +152,9 @@ while True:
   pygame.display.update()
   clock.tick(fps)
 
+''' the first snake body other than the head added to the snake when it eats the snack is added in the same place 
+as the head.Therefore the condition len(body)>3,since the first two are the head's rects they would always cause the
+game to end.'''
+
 
   
